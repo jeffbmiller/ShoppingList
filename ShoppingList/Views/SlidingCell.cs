@@ -22,8 +22,12 @@ namespace ShoppingList
             scrollView.Delegate = new SlidingCellScrollDelegate(this);
 			tapGesture = new UITapGestureRecognizer ();
 			tapGesture.AddTarget (() => {
-				if (scrollView.ContentOffset != PointF.Empty)
-					return;
+                if (scrollView.ContentOffset != PointF.Empty)
+                {
+                    scrollView.SetContentOffset(PointF.Empty, false);
+                    return;
+                }
+                    
 				var table = this.Superview.Superview as UITableView;
 				var indexPath = table.IndexPathForCell (this);
 				table.Source.RowSelected (table, indexPath);
