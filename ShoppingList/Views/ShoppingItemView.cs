@@ -1,6 +1,8 @@
 ﻿using System;
 using MonoTouch.Dialog;
 using MonoTouch.UIKit;
+using System.Drawing;
+using MonoTouch.Foundation;
 
 namespace ShoppingList
 {
@@ -34,10 +36,16 @@ namespace ShoppingList
                 new Section(){
                     (item = new EntryElement("Item","Enter Item name",presenter.Item)),
                     (quantity = new EntryElement("Quantity","Enter quantity", presenter.Quantity.ToString()){KeyboardType = UIKeyboardType.NumberPad}),
-                    (location = new EntryElement("Location","Enter Location", presenter.Location))
+                    (location = new EntryElement("Location","Enter Location", presenter.Location)),
+					new SimpleMultilineEntryElement("Comments","Enter comments"){Editable = true}
 
                 }
             };
+
+//			var textView = new UITextView (new RectangleF (5, 200, View.Bounds.Width, 100));
+//			textView.Editable = true;
+//			textView.Text = "Type Comments here";
+//			View.AddSubview (textView);
 
             this.NavigationItem.RightBarButtonItem = new UIBarButtonItem(UIBarButtonSystemItem.Save, async delegate
             {
@@ -50,5 +58,6 @@ namespace ShoppingList
 
         }
     }
+
 }
 

@@ -2,6 +2,7 @@ using System;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using MonoTouch.UIKit;
+using System.Linq;
 
 namespace ShoppingList
 {
@@ -48,9 +49,9 @@ namespace ShoppingList
             try
             {
                 IsBusy = true;
-                await shoppingService.DeleteShoppingItem(item);
+                var id = await shoppingService.DeleteShoppingItem(item);
                 IsBusy = false;
-                ShoppingItems.Remove(item);
+                ShoppingItems.Remove(ShoppingItems.First(x=>x.Id == item.Id));
 
             }
             catch (Exception exception)

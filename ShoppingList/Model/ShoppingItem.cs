@@ -12,7 +12,7 @@ namespace ShoppingList
         public decimal Quantity {get;set;}
         public string Notes {get;set;}
         public string Location {get;set;}
-
+		public bool Completed {get;set;}
     }
 }
 

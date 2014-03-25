@@ -16,16 +16,16 @@ namespace ShoppingList
         {
             conn = new SQLiteConnection (System.IO.Path.Combine (folder, "shoppingItems.db"));
             conn.CreateTable<ShoppingItem>();
-            Console.WriteLine ("Table created!");
-            if (!GetItems().Any())
-            {
-                var shoppingItems = new List<ShoppingItem>();
-                shoppingItems.Add(new ShoppingItem() { Item = "Milk", Quantity = 1, Location = "Sobeys" });
-                shoppingItems.Add(new ShoppingItem() { Item = "Bread", Quantity = 1, Location = "Sobeys" });
-
-                foreach (var item in shoppingItems)
-                    SaveItem(item);
-            }
+//            Console.WriteLine ("Table created!");
+//            if (!GetItems().Any())
+//            {
+//                var shoppingItems = new List<ShoppingItem>();
+//                shoppingItems.Add(new ShoppingItem() { Item = "Milk", Quantity = 1, Location = "Sobeys" });
+//                shoppingItems.Add(new ShoppingItem() { Item = "Bread", Quantity = 1, Location = "Sobeys" });
+//
+//                foreach (var item in shoppingItems)
+//                    SaveItem(item);
+//            }
         }
             
         private IEnumerable<ShoppingItem> GetItems()
@@ -50,15 +50,19 @@ namespace ShoppingList
             return item;
         }
 
-        private void DeleteItem(ShoppingItem item)
+        private int DeleteItem(ShoppingItem item)
         {
-            conn.Delete(item);
+            var id = conn.Delete(item);
             Console.WriteLine ("Item ID: {0} deleted", item.Id);
+			return id;
         }
 
-        public Task DeleteShoppingItem(ShoppingItem item)
+        public Task<int> DeleteShoppingItem(ShoppingItem item)
         {
-            return Task.Factory.StartNew(() => DeleteItem(item));
+            return Task.Factory.StartNew(() => { 
+				var id = DeleteItem(item);
+				return id;
+			});
         }
 
         public Task<IEnumerable<ShoppingItem>> GetShoppingItems()

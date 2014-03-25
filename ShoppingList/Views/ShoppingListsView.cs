@@ -62,28 +62,33 @@ namespace ShoppingList
 
         public override UITableViewCellEditingStyle EditingStyleForRow(UITableView tableView, NSIndexPath indexPath)
         {
-            return UITableViewCellEditingStyle.Delete;
+            return UITableViewCellEditingStyle.None;
         }
 
-        public async override void CommitEditingStyle(UITableView tableView, UITableViewCellEditingStyle editingStyle, NSIndexPath indexPath)
-        {
-            var item = presenter.ShoppingItems[indexPath.Row];
-            await presenter.DeleteItem(item);
-            tableView.ReloadData();
-        }
+//        public async override void CommitEditingStyle(UITableView tableView, UITableViewCellEditingStyle editingStyle, NSIndexPath indexPath)
+//        {
+//            var item = presenter.ShoppingItems[indexPath.Row];
+//            await presenter.DeleteItem(item);
+//            tableView.ReloadData();
+//        }
 
         public override UITableViewCell GetCell(UITableView tableView, NSIndexPath indexPath)
         {
-            var cell = tableView.DequeueReusableCell(cellIdentifier);
+            var cell = tableView.DequeueReusableCell(cellIdentifier) as SlidingCell;
+				var item = presenter.ShoppingItems [indexPath.Row];
             if (cell == null)
             {
-                cell = new UITableViewCell(UITableViewCellStyle.Value2, cellIdentifier);
-                cell.Accessory = UITableViewCellAccessory.DisclosureIndicator;
+				cell = new SlidingCell (cellIdentifier);
+				cell.DeleteButton.TouchDown += async delegate {
+					await presenter.DeleteItem(item);
+					tableView.ReloadData();
+				};
             }
 
-            var item = presenter.ShoppingItems[indexPath.Row];
+            ;
             cell.TextLabel.Text = item.Item;
-            cell.DetailTextLabel.Text = item.Quantity.ToString();
+
+//			cell.Accessory = UITableViewCellAccessory.DisclosureIndicator;
 
             return cell;
         }
@@ -96,6 +101,7 @@ namespace ShoppingList
             var item = presenter.ShoppingItems[indexPath.Row];
             controller.NavigationController.PushViewController(new ShoppingItemView(item), true);
         }
+
     }
 }
 
