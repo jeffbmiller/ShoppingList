@@ -43,6 +43,26 @@ namespace ShoppingList
             }
         }
 
+        public async Task MarkAsComplete(ShoppingItem item)
+        {
+            try
+            {
+                IsBusy = true;
+                item.Completed = !item.Completed; // Toggle Complete for now.
+                var result = await shoppingService.SaveShoppingItem(item);
+                ShoppingItems.First(x=>x.Id == item.Id).Completed = item.Completed;
+                IsBusy = false;
+            }
+            catch (Exception exception)
+            {
+                Console.WriteLine("Unable to mark as complete");
+            }
+            finally
+            {
+                IsBusy = false;
+            }
+        }
+
         public async Task DeleteItem(ShoppingItem item)
         {
            

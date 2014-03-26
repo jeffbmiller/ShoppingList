@@ -148,5 +148,6 @@
     <BundleResource Include="Resources\icon.png" />
     <BundleResource Include="Resources\Default%402x.png" />
     <BundleResource Include="Resources\Default-568h%402x.png" />
+    <BundleResource Include="Resources\checkmark.png" />
   </ItemGroup>
 </Project>

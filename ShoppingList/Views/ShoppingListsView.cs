@@ -83,11 +83,16 @@ namespace ShoppingList
 					await presenter.DeleteItem(item);
 					tableView.ReloadData();
 				};
+                cell.MoreButton.TouchDown += async delegate {
+                   
+                    await presenter.MarkAsComplete(item);
+                    tableView.ReloadData();
+                };
             }
 
             ;
             cell.TextLabel.Text = item.Item;
-
+            cell.StatusView.Image = item.Completed ? UIImage.FromBundle ("checkmark.png") : null;
 //			cell.Accessory = UITableViewCellAccessory.DisclosureIndicator;
 
             return cell;

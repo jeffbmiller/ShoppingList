@@ -14,6 +14,7 @@ namespace ShoppingList
         UIButton moreButton, deleteButton;
         UILabel scrollViewLabel;
         float catchWidth = 150f;
+        UIImageView statusView;
 
 		public SlidingCell(string resuseIdentifier) : base(UITableViewCellStyle.Default, resuseIdentifier)
         {
@@ -56,7 +57,11 @@ namespace ShoppingList
             scrollView.AddSubview(scrollViewContentView);
 
             scrollViewLabel = new UILabel();
+
             scrollViewContentView.AddSubview(scrollViewLabel);
+            statusView = new UIImageView ();
+            scrollView.AddSubview(statusView);
+
         }
 
 
@@ -67,6 +72,8 @@ namespace ShoppingList
                 return scrollViewLabel;
             }
         }
+
+        public UIImageView StatusView { get { return statusView; } }
 
 		public UIButton DeleteButton { get { return deleteButton; } }
 		public UIButton MoreButton { get { return moreButton; } }
@@ -86,7 +93,9 @@ namespace ShoppingList
 
             scrollViewContentView.Frame = new RectangleF(0, 0, b.Width, b.Height);
 
-            scrollViewLabel.Frame = RectangleF.Inflate(scrollViewContentView.Bounds, -10, 0);
+            scrollViewLabel.Frame = new RectangleF (40, 10, 60, 20);
+            statusView.Frame = new RectangleF (10, 10, 20, 20);
+
         }
 
         public override void PrepareForReuse()

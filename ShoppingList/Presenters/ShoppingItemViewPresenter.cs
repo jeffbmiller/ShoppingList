@@ -49,6 +49,17 @@ namespace ShoppingList
                 item.Location = value;
             }
         }
+        public bool Completed
+        {
+            get {return item.Completed;}
+            set
+            {
+                if (item.Completed == value)
+                    return;
+                item.Completed = value;
+            }
+        }
+
         #endregion
 
         public bool CanSave()
