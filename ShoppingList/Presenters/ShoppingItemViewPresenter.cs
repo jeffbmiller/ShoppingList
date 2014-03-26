@@ -22,19 +22,21 @@ namespace ShoppingList
             get {return item.Item;}
             set
             {
+                if (string.IsNullOrEmpty(value))
+                    throw new Exception("You must enter a item name");
                 if (item.Item == value)
                     return;
                 item.Item = value;
             }
         }
-        public decimal Quantity  
+        public string Quantity  
         {
-            get {return item.Quantity;}
+            get {return item.Quantity.ToString();}
             set
             {
-                if (item.Quantity == value)
+                if (item.Quantity == Convert.ToDecimal(value))
                     return;
-                item.Quantity = value;
+                item.Quantity = Convert.ToDecimal(value);
             }
         }
         public string Location  
@@ -48,6 +50,15 @@ namespace ShoppingList
             }
         }
         #endregion
+
+        public bool CanSave()
+        {
+            if (string.IsNullOrEmpty(item.Item))
+                return false;
+            if (item.Quantity == 0)
+                return false;
+            return true;
+        }
 
         public async Task SaveItem()
         {

@@ -35,25 +35,26 @@ namespace ShoppingList
             Root = new RootElement(presenter.Item){
                 new Section(){
                     (item = new EntryElement("Item","Enter Item name",presenter.Item)),
-                    (quantity = new EntryElement("Quantity","Enter quantity", presenter.Quantity.ToString()){KeyboardType = UIKeyboardType.NumberPad}),
-                    (location = new EntryElement("Location","Enter Location", presenter.Location)),
-					new SimpleMultilineEntryElement("Comments","Enter comments"){Editable = true}
+                    (quantity = new EntryElement("Quantity","Enter quantity", presenter.Quantity){KeyboardType = UIKeyboardType.NumberPad}),
+                    (location = new EntryElement("Location","Enter Location", presenter.Location))
 
                 }
             };
 
-//			var textView = new UITextView (new RectangleF (5, 200, View.Bounds.Width, 100));
-//			textView.Editable = true;
-//			textView.Text = "Type Comments here";
-//			View.AddSubview (textView);
-
             this.NavigationItem.RightBarButtonItem = new UIBarButtonItem(UIBarButtonSystemItem.Save, async delegate
             {
-                presenter.Item = item.Value;
-                presenter.Quantity = Convert.ToDecimal(quantity.Value);
-                presenter.Location = location.Value;
-                await presenter.SaveItem();
-                NavigationController.PopToRootViewController(true);
+                try
+                {
+                    presenter.Item = item.Value;
+                    presenter.Quantity = quantity.Value;
+                    presenter.Location = location.Value;
+                    await presenter.SaveItem();
+                    NavigationController.PopToRootViewController(true);
+                }
+                catch (Exception e)
+                {
+                    new UIAlertView("Error Saving",e.Message,null,"OK",null).Show();
+                }
             });
 
         }
