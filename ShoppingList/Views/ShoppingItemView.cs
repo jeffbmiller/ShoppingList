@@ -3,6 +3,7 @@ using MonoTouch.Dialog;
 using MonoTouch.UIKit;
 using System.Drawing;
 using MonoTouch.Foundation;
+using Xamarin.Media;
 
 namespace ShoppingList
 {
@@ -14,11 +15,11 @@ namespace ShoppingList
         public ShoppingItemView(ShoppingItem item):base(null,true)
         {
             this.presenter = new ShoppingItemViewPresenter(item);
-            var tap = new UITapGestureRecognizer ();
-            tap.AddTarget (() =>{
-               View.EndEditing (true);
-            });
-            View.AddGestureRecognizer (tap);
+//            var tap = new UITapGestureRecognizer ();
+//            tap.AddTarget (() =>{
+//               View.EndEditing (true);
+//            });
+//            View.AddGestureRecognizer (tap);
 
             presenter.IsBusyChanged = (busy) =>
             {
@@ -37,10 +38,19 @@ namespace ShoppingList
                     (item = new EntryElement("Item","Enter Item name",presenter.Item)),
                     (quantity = new EntryElement("Quantity","Enter quantity", presenter.Quantity.ToString()){KeyboardType = UIKeyboardType.NumberPad}),
                     (location = new EntryElement("Location","Enter Location", presenter.Location)),
-					new SimpleMultilineEntryElement("Comments","Enter comments"){Editable = true}
+					new StringElement("Show Picture",delegate {
+						var view = new UIImageView(presenter.GetImage());
+						var vc = new UIViewController();
+						vc.Add(view);
+						NavigationController.PushViewController(vc,true);
 
-                }
-            };
+					}),
+				new Section(){new StyledStringElement("Take Picture", async delegate {
+					var picker = new UIImagePickerController();
+					picker.FinishedPickingImage += HandleFinishedPickingImage;
+					await NavigationController.PresentViewControllerAsync(picker,true);
+				}){Accessory = UITableViewCellAccessory.DisclosureIndicator}}
+				}};
 
 //			var textView = new UITextView (new RectangleF (5, 200, View.Bounds.Width, 100));
 //			textView.Editable = true;
@@ -56,6 +66,12 @@ namespace ShoppingList
                 NavigationController.PopToRootViewController(true);
             });
 
+        }
+
+		void HandleFinishedPickingImage (object sender, UIImagePickerImagePickedEventArgs e)
+        {
+			var image = e.Image;
+			presenter.SerializeImage (image);
         }
     }
 

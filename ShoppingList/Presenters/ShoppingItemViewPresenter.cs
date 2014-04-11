@@ -1,5 +1,10 @@
 ﻿using System;
 using System.Threading.Tasks;
+using MonoTouch.UIKit;
+using System.Runtime.Serialization;
+using System.IO;
+using System.Collections;
+using System.Runtime.Serialization.Formatters.Binary;
 
 namespace ShoppingList
 {
@@ -47,6 +52,21 @@ namespace ShoppingList
                 item.Location = value;
             }
         }
+
+		public UIImage GetImage()
+		{
+			UIImage image;
+			using (var ms = new MemoryStream(item.Image))
+			{
+				var formater = new BinaryFormatter ();
+
+				image = formater.Deserialize (ms) as UIImage;
+			}
+
+			return image;
+		}
+
+
         #endregion
 
         public async Task SaveItem()
@@ -66,6 +86,19 @@ namespace ShoppingList
                 IsBusy = false;
             }
         }
+
+		public void SerializeImage(UIImage image)
+		{
+			byte[] bytes;
+			IFormatter formatter = new BinaryFormatter();
+			using (MemoryStream stream = new MemoryStream())
+			{
+				formatter.Serialize(stream, image);
+				bytes = stream.ToArray();
+			}
+			item.Image = bytes;
+
+		}
     }
 }
 
