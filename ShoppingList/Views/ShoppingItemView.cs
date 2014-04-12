@@ -3,6 +3,7 @@ using MonoTouch.Dialog;
 using MonoTouch.UIKit;
 using System.Drawing;
 using MonoTouch.Foundation;
+using System.IO;
 
 namespace ShoppingList
 {
@@ -38,14 +39,23 @@ namespace ShoppingList
                     (quantity = new EntryElement("Quantity","Enter quantity", presenter.Quantity){KeyboardType = UIKeyboardType.NumberPad}),
 					(location = new EntryElement("Location","Enter Location", presenter.Location)),
 					new StringElement("Show Picture",delegate {
-						var view = new UIImageView(presenter.GetImage());
-						var vc = new UIViewController();
-						vc.Add(view);
+                        var documents = Environment.GetFolderPath (Environment.SpecialFolder.MyDocuments);
+                        var filepath = Path.Combine (documents, presenter.Item + ".jpg");
+//                        var data = NSData.FromFile(filepath); 
+
+                        var webview = new UIWebView(View.Bounds);
+                        webview.LoadRequest(new NSUrlRequest(new NSUrl(filepath,false)));
+                        webview.ScalesPageToFit = true;
+                        webview.AutoresizingMask = UIViewAutoresizing.FlexibleWidth;
+                        var vc = new UIViewController();
+                        vc.Add(webview);
 						NavigationController.PushViewController(vc,true);
 					}),
 					new StyledStringElement("Take Picture", async delegate {
 						var picker = new UIImagePickerController();
-						picker.FinishedPickingImage += HandleFinishedPickingImage;
+                        picker.SourceType = UIImagePickerControllerSourceType.Camera;
+                        picker.CameraCaptureMode = UIImagePickerControllerCameraCaptureMode.Photo;
+                        picker.FinishedPickingMedia += HandleFinishedPickingImage;
 						picker.Canceled += delegate {
 							DismissViewControllerAsync(true);
 					};
@@ -71,10 +81,22 @@ namespace ShoppingList
             });
 
         }
-		void HandleFinishedPickingImage (object sender, UIImagePickerImagePickedEventArgs e)
+        async void HandleFinishedPickingImage (object sender, UIImagePickerMediaPickedEventArgs e)
 		{
-			var image = e.Image;
-			presenter.SerializeImage (image);
+            var image = e.OriginalImage;
+
+            var documentsDirectory = Environment.GetFolderPath (Environment.SpecialFolder.MyDocuments);
+            string jpgFilename = System.IO.Path.Combine (documentsDirectory, presenter.Item +".jpg"); // hardcoded filename, overwritten each time
+            NSData imgData = image.AsJPEG();
+            NSError err = null;
+            if (imgData.Save(jpgFilename, false, out err)) {
+                Console.WriteLine("saved as " + jpgFilename);
+            } else {
+                Console.WriteLine("NOT saved as " + jpgFilename + " because" + err.LocalizedDescription);
+            }
+            presenter.ImagePath = jpgFilename;
+            await presenter.SaveItem();
+            DismissViewControllerAsync(true);
 		}
     }
 

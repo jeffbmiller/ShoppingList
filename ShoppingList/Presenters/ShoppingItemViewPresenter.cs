@@ -65,6 +65,17 @@ namespace ShoppingList
             }
         }
 
+        public string ImagePath
+        {
+            get {return item.ImagePath;}
+            set
+            {
+                if (item.ImagePath == value)
+                    return;
+                item.ImagePath = value;
+            }
+        }
+
         #endregion
 
         public bool CanSave()
@@ -94,31 +105,8 @@ namespace ShoppingList
             }
         }
 
-		public UIImage GetImage()
-		{
-			UIImage image;
-			using (var ms = new MemoryStream(item.Image))
-			{
-				var formater = new BinaryFormatter ();
+		
 
-				image = formater.Deserialize (ms) as UIImage;
-			}
-
-			return image;
-		}
-
-		public void SerializeImage(UIImage image)
-		{
-			byte[] bytes;
-			IFormatter formatter = new BinaryFormatter();
-			using (MemoryStream stream = new MemoryStream())
-			{
-				formatter.Serialize(stream, image);
-				bytes = stream.ToArray();
-			}
-			item.Image = bytes;
-
-		}
     }
 }
 

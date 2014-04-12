@@ -13,7 +13,7 @@ namespace ShoppingList
         public string Notes {get;set;}
         public string Location {get;set;}
 		public bool Completed {get;set;}
-		public byte[] Image {get;set;}
+        public string ImagePath {get;set;}
     }
 }
 
