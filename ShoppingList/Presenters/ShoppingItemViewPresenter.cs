@@ -22,6 +22,8 @@ namespace ShoppingList
 
         #region Properties
 
+        public ShoppingItem Model { get { return item; } }
+
         public string Item 
         {
             get {return item.Item;}

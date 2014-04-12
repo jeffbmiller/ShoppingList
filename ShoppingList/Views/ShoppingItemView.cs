@@ -39,16 +39,18 @@ namespace ShoppingList
                     (quantity = new EntryElement("Quantity","Enter quantity", presenter.Quantity){KeyboardType = UIKeyboardType.NumberPad}),
 					(location = new EntryElement("Location","Enter Location", presenter.Location)),
 					new StringElement("Show Picture",delegate {
-                        var documents = Environment.GetFolderPath (Environment.SpecialFolder.MyDocuments);
-                        var filepath = Path.Combine (documents, presenter.Item + ".jpg");
-//                        var data = NSData.FromFile(filepath); 
-
-                        var webview = new UIWebView(View.Bounds);
-                        webview.LoadRequest(new NSUrlRequest(new NSUrl(filepath,false)));
-                        webview.ScalesPageToFit = true;
-                        webview.AutoresizingMask = UIViewAutoresizing.FlexibleWidth;
+                        var data = presenter.Model.Image;
+                        if (data == null)
+                        {
+                            Console.WriteLine("No saved image found");
+                            return;
+                        }
+                        NSData imageData = NSData.FromArray(data);
+                        var image = UIImage.LoadFromData(imageData);
+                        var imageView = new UIImageView(View.Bounds);
+                        imageView.Image = image;
                         var vc = new UIViewController();
-                        vc.Add(webview);
+                        vc.Add(imageView);
 						NavigationController.PushViewController(vc,true);
 					}),
 					new StyledStringElement("Take Picture", async delegate {
@@ -84,17 +86,12 @@ namespace ShoppingList
         async void HandleFinishedPickingImage (object sender, UIImagePickerMediaPickedEventArgs e)
 		{
             var image = e.OriginalImage;
+            var imgData = image.AsJPEG();
 
-            var documentsDirectory = Environment.GetFolderPath (Environment.SpecialFolder.MyDocuments);
-            string jpgFilename = System.IO.Path.Combine (documentsDirectory, presenter.Item +".jpg"); // hardcoded filename, overwritten each time
-            NSData imgData = image.AsJPEG();
-            NSError err = null;
-            if (imgData.Save(jpgFilename, false, out err)) {
-                Console.WriteLine("saved as " + jpgFilename);
-            } else {
-                Console.WriteLine("NOT saved as " + jpgFilename + " because" + err.LocalizedDescription);
-            }
-            presenter.ImagePath = jpgFilename;
+            Byte[] myByteArray = new Byte[imgData.Length];
+            System.Runtime.InteropServices.Marshal.Copy(imgData.Bytes, myByteArray, 0, Convert.ToInt32(imgData.Length));
+           
+            presenter.Model.Image = myByteArray;
             await presenter.SaveItem();
             DismissViewControllerAsync(true);
 		}
