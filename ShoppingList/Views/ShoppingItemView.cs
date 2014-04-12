@@ -14,11 +14,11 @@ namespace ShoppingList
         public ShoppingItemView(ShoppingItem item):base(null,true)
         {
             this.presenter = new ShoppingItemViewPresenter(item);
-            var tap = new UITapGestureRecognizer ();
-            tap.AddTarget (() =>{
-               View.EndEditing (true);
-            });
-            View.AddGestureRecognizer (tap);
+//            var tap = new UITapGestureRecognizer ();
+//            tap.AddTarget (() =>{
+//               View.EndEditing (true);
+//            });
+//            View.AddGestureRecognizer (tap);
 
             presenter.IsBusyChanged = (busy) =>
             {
@@ -43,11 +43,14 @@ namespace ShoppingList
 						vc.Add(view);
 						NavigationController.PushViewController(vc,true);
 					}),
-					new Section(){new StyledStringElement("Take Picture", async delegate {
+					new StyledStringElement("Take Picture", async delegate {
 						var picker = new UIImagePickerController();
 						picker.FinishedPickingImage += HandleFinishedPickingImage;
+						picker.Canceled += delegate {
+							DismissViewControllerAsync(true);
+					};
 						await NavigationController.PresentViewControllerAsync(picker,true);
-					}){Accessory = UITableViewCellAccessory.DisclosureIndicator}}
+					}){Accessory = UITableViewCellAccessory.DisclosureIndicator}
 				}};
 
 

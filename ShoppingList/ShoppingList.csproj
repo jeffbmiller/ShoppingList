@@ -59,7 +59,7 @@
     </MtouchI18n>
     <MtouchArch>ARMv7</MtouchArch>
     <MtouchSdkVersion>7.1</MtouchSdkVersion>
-    <CodesignProvision>C5E6459C-DEB5-4CA9-BC79-17C87DDA0D43</CodesignProvision>
+    <CodesignProvision>4B9060D1-7F4B-43F9-A964-710D589FC8DB</CodesignProvision>
     <IpaPackageName>
     </IpaPackageName>
   </PropertyGroup>
@@ -72,7 +72,6 @@
     <CodesignEntitlements>Entitlements.plist</CodesignEntitlements>
     <ConsolePause>false</ConsolePause>
     <CodesignKey>iPhone Developer</CodesignKey>
-    <CodesignProvision>4B9060D1-7F4B-43F9-A964-710D589FC8DB</CodesignProvision>
     <IpaPackageName>
     </IpaPackageName>
     <MtouchI18n>
