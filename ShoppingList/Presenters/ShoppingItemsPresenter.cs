@@ -6,36 +6,32 @@ using System.Linq;
 
 namespace ShoppingList
 {
-    public class ShoppingListsViewPresenter : BasePresenter
+    public class ShoppingItemsPresenter : BasePresenter
     {
         private ShoppingService shoppingService;
+		private IShoppingListsView view;
 
-        public ShoppingListsViewPresenter()
+		public ShoppingItemsPresenter(IShoppingListsView view)
         {
             shoppingService = new ShoppingService();
-
+			this.view = view;
         }
 
-        public List<ShoppingItem> ShoppingItems {get;set;}
-
-        public async Task ExecuteLoadExpensesCommand()
+		public IEnumerable<ShoppingItem> ShoppingItems { get; set; }
+			
+		public async void Refresh()
         {
-            ShoppingItems = new List<ShoppingItem>();
-
             try
             {
                 IsBusy = true;
-                var shoppingItems = await shoppingService.GetShoppingItems();
+				var items = await shoppingService.QueryItemsAsync();
+				ShoppingItems = items;
+				view.Refresh (items);
                 IsBusy = false;
-                foreach (var expense in shoppingItems)
-                {
-                    ShoppingItems.Add(expense);
-                }
-
             }
             catch (Exception exception)
             {
-                Console.WriteLine("Unable to query and gather expenses");
+				Console.WriteLine("Unable to query items");
             }
             finally
             {
@@ -43,14 +39,20 @@ namespace ShoppingList
             }
         }
 
-        public async Task MarkAsComplete(ShoppingItem item)
+		public void ShowItemView(ShoppingItem item)
+		{
+			view.ShowItemView (item);
+		}
+
+		public async void MarkAsComplete(ShoppingItem item)
         {
             try
             {
                 IsBusy = true;
                 item.Completed = !item.Completed; // Toggle Complete for now.
                 var result = await shoppingService.SaveShoppingItem(item);
-                ShoppingItems.First(x=>x.Id == item.Id).Completed = item.Completed;
+				Console.WriteLine("{0} marked as {1}",item.Item,item.Completed ? "Completed" : "Not Complete");
+				Refresh();
                 IsBusy = false;
             }
             catch (Exception exception)
@@ -63,20 +65,19 @@ namespace ShoppingList
             }
         }
 
-        public async Task DeleteItem(ShoppingItem item)
+		public async void DeleteItem(ShoppingItem item)
         {
            
             try
             {
                 IsBusy = true;
-                var id = await shoppingService.DeleteShoppingItem(item);
+				var id = await shoppingService.DeleteShoppingItem(item);
+				Refresh();
                 IsBusy = false;
-                ShoppingItems.Remove(ShoppingItems.First(x=>x.Id == item.Id));
-
             }
             catch (Exception exception)
             {
-                Console.WriteLine("Unable to query and gather expenses");
+				Console.WriteLine("Unable to delete item");
             }
             finally
             {
@@ -84,7 +85,6 @@ namespace ShoppingList
             }
         }
     }
-
-   
+	   
 }
 

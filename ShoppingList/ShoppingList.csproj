@@ -127,13 +127,15 @@
     <Compile Include="Views\ShoppingListsView.cs" />
     <Compile Include="Services\ShoppingService.cs" />
     <Compile Include="Model\ShoppingItem.cs" />
-    <Compile Include="Presenters\ShoppingListsViewPresenter.cs" />
     <Compile Include="Views\ShoppingItemView.cs" />
     <Compile Include="Presenters\ShoppingItemViewPresenter.cs" />
     <Compile Include="Presenters\BasePresenter.cs" />
     <Compile Include="Views\BaseDialogView.cs" />
     <Compile Include="ElementPack.cs" />
     <Compile Include="Views\SlidingCell.cs" />
+    <Compile Include="Views\ShoppingItemsView.cs" />
+    <Compile Include="Views\IShoppingListsView.cs" />
+    <Compile Include="Presenters\ShoppingItemsPresenter.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

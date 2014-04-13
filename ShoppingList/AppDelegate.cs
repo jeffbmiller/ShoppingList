@@ -28,7 +28,7 @@ namespace ShoppingList
 			
             // If you have defined a root view controller, set it here:
             // window.RootViewController = myViewController;
-            var viewController = new UINavigationController(new ShoppingListsView());
+			var viewController = new UINavigationController(new ShoppingItemsView());
             window.RootViewController = viewController;
 
             // make the window visible

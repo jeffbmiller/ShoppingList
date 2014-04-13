@@ -65,7 +65,7 @@ namespace ShoppingList
 			});
         }
 
-        public Task<IEnumerable<ShoppingItem>> GetShoppingItems()
+        public Task<IEnumerable<ShoppingItem>> QueryItemsAsync()
         {
             return Task.Factory.StartNew(() => GetItems());
         }
