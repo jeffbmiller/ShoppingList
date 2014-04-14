@@ -10,8 +10,8 @@ namespace ShoppingList
     public class ShoppingItemView : DialogViewController
     {
         private ShoppingItemViewPresenter presenter;
-        private EntryElement item, quantity, location;
-
+        private EntryElement item, location;
+		private StepperElement quantity;
         public ShoppingItemView(ShoppingItem item):base(null,true)
         {
             this.presenter = new ShoppingItemViewPresenter(item);
@@ -36,7 +36,7 @@ namespace ShoppingList
             Root = new RootElement(presenter.Item){
                 new Section(){
                     (item = new EntryElement("Item","Enter Item name",presenter.Item)),
-                    (quantity = new EntryElement("Quantity","Enter quantity", presenter.Quantity){KeyboardType = UIKeyboardType.NumberPad}),
+					(quantity = new StepperElement("Quantity", presenter.Quantity, new StepperView())),
 					(location = new EntryElement("Location","Enter Location", presenter.Location)),
 					new StringElement("Show Picture",delegate {
                         var data = presenter.Model.Image;
@@ -71,7 +71,7 @@ namespace ShoppingList
                 try
                 {
                     presenter.Item = item.Value;
-                    presenter.Quantity = quantity.Value;
+					presenter.Quantity = (int)quantity.Value;
                     presenter.Location = location.Value;
                     await presenter.SaveItem();
                     NavigationController.PopToRootViewController(true);
@@ -97,5 +97,16 @@ namespace ShoppingList
 		}
     }
 
+	public class StepperElement : UIViewElement
+	{
+		private StepperView stepperView;
+		public StepperElement (string caption,int value, StepperView stepperView):base(null,stepperView,false)
+		{
+			this.stepperView = stepperView;
+			stepperView.Caption = caption;
+			stepperView.Stepper.Value =  value;
+		}
+		public double Value { get { return stepperView.Value; } }
+	}
 }
 

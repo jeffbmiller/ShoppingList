@@ -136,6 +136,7 @@
     <Compile Include="Views\ShoppingItemsView.cs" />
     <Compile Include="Views\IShoppingListsView.cs" />
     <Compile Include="Presenters\ShoppingItemsPresenter.cs" />
+    <Compile Include="Views\StepperView.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

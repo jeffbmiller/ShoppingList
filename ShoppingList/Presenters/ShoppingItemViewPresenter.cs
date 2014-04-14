@@ -36,14 +36,14 @@ namespace ShoppingList
                 item.Item = value;
             }
         }
-        public string Quantity  
+		public int Quantity  
         {
-            get {return item.Quantity.ToString();}
+            get {return item.Quantity;}
             set
             {
-                if (item.Quantity == Convert.ToDecimal(value))
+				if (item.Quantity == value)
                     return;
-                item.Quantity = Convert.ToDecimal(value);
+				item.Quantity = value;
             }
         }
         public string Location  

@@ -9,7 +9,7 @@ namespace ShoppingList
         [PrimaryKey, AutoIncrement]
         public int Id { get; set;}
         public string Item { get; set;}
-        public decimal Quantity {get;set;}
+		public int Quantity {get;set;}
         public string Notes {get;set;}
         public string Location {get;set;}
 		public bool Completed {get;set;}

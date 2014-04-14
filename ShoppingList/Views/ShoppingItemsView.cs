@@ -4,6 +4,7 @@ using MonoTouch.UIKit;
 using System.Linq;
 using System.Collections.Generic;
 using MonoTouch.Foundation;
+using System.Threading;
 
 namespace ShoppingList
 {
@@ -29,14 +30,27 @@ namespace ShoppingList
 				else
 					UIApplication.SharedApplication.NetworkActivityIndicatorVisible = false;
 			};
+
+			RefreshRequested += delegate {
+				Thread.Sleep(1000);
+				presenter.Refresh();
+				ReloadComplete();
+			};
+				
 		}
 
 		public Source TableSource { get; private set; }
 
 		public override void ViewDidLoad()
 		{
-			presenter.Refresh ();
+//			presenter.Refresh ();
 			base.ViewDidLoad();
+		}
+
+		public override void ViewDidAppear (bool animated)
+		{
+			base.ViewDidAppear (animated);
+			presenter.Refresh ();
 		}
 			
 		public override Source CreateSizingSource (bool unevenRows)
@@ -49,16 +63,17 @@ namespace ShoppingList
 		public void Refresh(IEnumerable<ShoppingItem> items)
 		{
 			InvokeOnMainThread (delegate {
-				Root.Clear ();
-				Root.Add (new Section () {
-					items.Select (x => new LongPressElement (x, delegate {
+				if (!Root.Any ())
+					Root.Add (new Section (""));
+				var section = Root[0];
+				section.Clear();
+				section.AddAll (
+					items.Select (x => new StyledStringElement (x.Item, delegate {
 						presenter.ShowItemView (x);
-					}, delegate {
-						presenter.MarkAsComplete (x);
-					}))
-				});
+					})));
+				Root.Reload(section,UITableViewRowAnimation.None);
 			});
-			
+
 		}
 
 		public void ShowItemView(ShoppingItem item)
@@ -82,7 +97,12 @@ namespace ShoppingList
 			gester = new UILongPressGestureRecognizer ();
 			gester.Delegate = new LongPressGestureDelegate ();
 			gester.MinimumPressDuration = .5;
-			gester.AddTarget (longPressAction);
+			gester.AddTarget (x => {
+				if ((x as UILongPressGestureRecognizer).State == UIGestureRecognizerState.Began)
+				{
+					longPressAction();
+				}
+			});
 
 		}
 
@@ -95,20 +115,15 @@ namespace ShoppingList
 
 			return cell;
 		}
-
-		protected override void Dispose (bool disposing)
-		{
-			base.Dispose (disposing);
-		
-		}
 	}
 
 	public class LongPressGestureDelegate : UIGestureRecognizerDelegate
 	{
 		public LongPressGestureDelegate ()
 		{
-			
+
 		}
+
 
 
 	}
