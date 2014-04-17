@@ -31,11 +31,11 @@ namespace ShoppingList
 					UIApplication.SharedApplication.NetworkActivityIndicatorVisible = false;
 			};
 
-			RefreshRequested += delegate {
-				Thread.Sleep(1000);
-				presenter.Refresh();
-				ReloadComplete();
-			};
+//			RefreshRequested += delegate {
+//				Thread.Sleep(1000);
+//				presenter.Refresh();
+//				ReloadComplete();
+//			};
 				
 		}
 

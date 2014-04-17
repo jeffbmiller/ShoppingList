@@ -31,11 +31,22 @@ namespace ShoppingList
 			stepper.Frame = new System.Drawing.RectangleF (200, 5, 100, 25);
 		}
 
-		public UIStepper Stepper { get { return stepper; } }
+//		public UIStepper Stepper { get { return stepper; } }
 
 		public string Caption { get { return captionLabel.Text; } set { captionLabel.Text = value; } }
 
-		public double Value { get { return stepper.Value; } }
+		public int Value 
+		{ 
+			get { return (int)stepper.Value; } 
+			set 
+			{
+				if ((int)stepper.Value == value)
+					return;
+				stepper.Value = value;
+				valueLabel.Text = value.ToString();
+
+			}
+		}
 	}
 }
 

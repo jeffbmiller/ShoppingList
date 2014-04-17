@@ -33,36 +33,17 @@ namespace ShoppingList
         public override void ViewDidLoad()
         {
             base.ViewDidLoad();
-            Root = new RootElement(presenter.Item){
+			Root = new RootElement(""){
                 new Section(){
-                    (item = new EntryElement("Item","Enter Item name",presenter.Item)),
+					(item = new EntryElement("Item","Enter Item name",presenter.Item)),
 					(quantity = new StepperElement("Quantity", presenter.Quantity, new StepperView())),
 					(location = new EntryElement("Location","Enter Location", presenter.Location)),
-					new StringElement("Show Picture",delegate {
-                        var data = presenter.Model.Image;
-                        if (data == null)
-                        {
-                            Console.WriteLine("No saved image found");
-                            return;
-                        }
-                        NSData imageData = NSData.FromArray(data);
-                        var image = UIImage.LoadFromData(imageData);
-                        var imageView = new UIImageView(View.Bounds);
-                        imageView.Image = image;
-                        var vc = new UIViewController();
-                        vc.Add(imageView);
-						NavigationController.PushViewController(vc,true);
+					new StyledStringElement("Take Picture", delegate {
+						TakePicture();
+					}){Accessory = UITableViewCellAccessory.DisclosureIndicator},
+					new StringElement("View Picture",delegate {
+						ShowPicture();
 					}),
-					new StyledStringElement("Take Picture", async delegate {
-						var picker = new UIImagePickerController();
-                        picker.SourceType = UIImagePickerControllerSourceType.Camera;
-                        picker.CameraCaptureMode = UIImagePickerControllerCameraCaptureMode.Photo;
-                        picker.FinishedPickingMedia += HandleFinishedPickingImage;
-						picker.Canceled += delegate {
-							DismissViewControllerAsync(true);
-					};
-						await NavigationController.PresentViewControllerAsync(picker,true);
-					}){Accessory = UITableViewCellAccessory.DisclosureIndicator}
 				}};
 
 
@@ -93,7 +74,36 @@ namespace ShoppingList
            
             presenter.Model.Image = myByteArray;
             await presenter.SaveItem();
-            DismissViewControllerAsync(true);
+			await DismissViewControllerAsync(true);
+		}
+
+		private async void TakePicture()
+		{
+			var picker = new UIImagePickerController();
+			picker.SourceType = UIImagePickerControllerSourceType.Camera;
+			picker.CameraCaptureMode = UIImagePickerControllerCameraCaptureMode.Photo;
+			picker.FinishedPickingMedia += HandleFinishedPickingImage;
+			picker.Canceled += delegate {
+				DismissViewControllerAsync (true);
+			};
+			await NavigationController.PresentViewControllerAsync(picker,true);
+		}
+
+		private void ShowPicture()
+		{
+			var data = presenter.Model.Image;
+			if (data == null)
+			{
+				new UIAlertView("Error","No saved imaged for this item",null,"OK",null).Show();
+				return;
+			}
+			NSData imageData = NSData.FromArray(data);
+			var image = UIImage.LoadFromData(imageData);
+			var imageView = new UIImageView(View.Bounds);
+			imageView.Image = image;
+			var vc = new UIViewController();
+			vc.Add(imageView);
+			NavigationController.PushViewController(vc,true);
 		}
     }
 
@@ -104,9 +114,10 @@ namespace ShoppingList
 		{
 			this.stepperView = stepperView;
 			stepperView.Caption = caption;
-			stepperView.Stepper.Value =  value;
+			stepperView.Value = value;
+
 		}
-		public double Value { get { return stepperView.Value; } }
+		public int Value { get { return stepperView.Value; } }
 	}
 }
 
